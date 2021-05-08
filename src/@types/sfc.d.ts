@@ -1,6 +1,6 @@
-import Vue from 'vue';
+import Vue from 'vue'
 
-export class VanComponent {
+export declare class BaseComponent extends Vue {
   static name: string;
   static install(vue: typeof Vue): void;
 }

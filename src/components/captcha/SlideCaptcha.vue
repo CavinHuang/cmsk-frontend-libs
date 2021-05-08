@@ -68,7 +68,7 @@ export default class extends Vue {
   // 验证提示文字
   @Prop() private checkTips!: string
   // 重新刷新的方法
-  @Prop({ default: () => { return false } }) private refresh!: () => any
+  @Prop({ default: () => { return false } }) private refresh!: () => void
   // 图片大小
   @Prop({ default: () => ({ width: 310, height: 155 }) }) private imgSize!: ImageSizeType
   // 图片信息
@@ -96,6 +96,12 @@ export default class extends Vue {
 
   public closeBox () {
     this.input()
+    this.success()
+  }
+
+  @Emit('success')
+  private success () {
+    return true
   }
 
   @Emit('actionEnd')

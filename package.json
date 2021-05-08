@@ -1,10 +1,11 @@
 {
   "name": "cmsk-fontend-libs",
-  "version": "0.1.0",
+  "version": "0.1.10",
   "private": false,
   "description": "验证码组件",
   "author": "cavinHuang<sujinw@qq.com>",
   "main": "dist/Captcha.common.js",
+  "typings": "src/@types/index.d.ts",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

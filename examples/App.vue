@@ -96,133 +96,125 @@
   </div>
 </template>
 
-<script>
-import Verify from '../src/components/captcha/SlideCaptcha'
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+import Verify from '../src/components/captcha/SlideCaptcha.vue'
 import { reqGet, reqCheck } from '../src/components/captcha/api/index'
-
-export default {
-  data () {
-    return {
-      loginName: 'admin',
-      loginPassword: '123456',
-      menu: [],
-      checked: true,
-      explain: '',
-      checkTips: '',
-      checkStatus: 'waiting',
-      dialogFormVisible: false,
-      verifyVisible: true,
-      imageInfo: {
-        backImgBase: '',
-        blockBackImgBase: ''
-      }
-    }
-  },
+import { CheckStatusType, CheckParamsType, ImageInfoType } from '@/@types/component'
+@Component({
   components: {
     Verify
-  },
-  beforeDestroy () {
-    document.removeEventListener('keyup', this.handerKeyup)
-  },
+  }
+})
+export default class extends Vue {
+  private loginName = 'admin'
+  private loginPassword = '123456'
+  private menu: Array<any> = []
+  private checked = true
+  private explain = ''
+  private checkTips = ''
+  private checkStatus: CheckStatusType = 'waiting'
+  private dialogFormVisible = false
+  private verifyVisible = false
+  private imageInfo: ImageInfoType = {
+    backImgBase: '',
+    blockBackImgBase: '',
+    backToken: '',
+    secretKey: ''
+  }
+
   created () {
-    document.addEventListener('keyup', this.handerKeyup)
     this.uuid()
     this.getPictrue()
-  },
-  methods: {
-    successHandle () {
-      alert('验证成功')
-    },
-    // 生成 uuid
-    uuid () {
-      const s = []
-      const hexDigits = '0123456789abcdef'
-      for (let i = 0; i < 36; i++) {
-        s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
-      }
-      s[14] = '4' // bits 12-15 of the time_hi_and_version field to 0010
-      s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1) // bits 6-7 of the clock_seq_hi_and_reserved to 01
-      s[8] = s[13] = s[18] = s[23] = '-'
+  }
 
-      const slider = 'slider' + '-' + s.join('')
-      const point = 'point' + '-' + s.join('')
-      // 判断下是否存在 slider
-      console.log(localStorage.getItem('slider'))
-      if (!localStorage.getItem('slider')) {
-        localStorage.setItem('slider', slider)
-      }
-      if (!localStorage.getItem('point')) {
-        localStorage.setItem('point', point)
-      }
-    },
-    // 请求背景图片和验证图片
-    getPictrue () {
-      const data = {
-        captchaType: 'blockPuzzle', // clickWord
-        clientUid: localStorage.getItem('slider'),
-        ts: Date.now() // 现在的时间戳
-      }
-      reqGet(data).then((res) => {
-        if (res.repCode === '0000') {
-          this.imageInfo.backImgBase = res.repData.originalImageBase64
-          this.imageInfo.blockBackImgBase = res.repData.jigsawImageBase64
-          this.imageInfo.backToken = res.repData.token
-          this.imageInfo.secretKey = res.repData.secretKey
-          // 点击字验证码特有，滑动不需要
-          this.imageInfo.wordList = res.repData.wordList
-        } else {
-          this.checkTips = res.repMsg
-        }
+  successHandle () {
+    alert('验证成功')
+  }
 
-        // 判断接口请求次数是否失效
-        if (res.repCode === '6201') {
-          this.backImgBase = ''
-          this.blockBackImgBase = ''
-        }
-      })
-    },
-    handleActionEnd (data) {
-      reqCheck(data).then((res) => {
-        if (res.repCode === '0000') {
-          this.checkStatus = 'success'
-        } else {
-          this.checkStatus = 'error'
-          this.checkTips = res.reqMsg
-        }
-      })
-    },
-    checkStatusChange (status) {
-      this.checkStatus = status
-    },
-    handerKeyup (e) {
-      const keycode = document.all ? event.keyCode : e.which
-      if (keycode === 13) {
-        this.checkPrama()
-      }
-    },
-    goRegister () {
-      this.$router.push('/register')
-    },
+  // 生成 uuid
+  uuid () {
+    const s: Array<number | any> = []
+    const hexDigits = '0123456789abcdef'
+    for (let i = 0; i < 36; i++) {
+      s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
+    }
+    s[14] = '4' // bits 12-15 of the time_hi_and_version field to 0010
+    s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1) // bits 6-7 of the clock_seq_hi_and_reserved to 01
+    s[8] = s[13] = s[18] = s[23] = '-'
 
-    checkPrama () {
-      if (!this.loginName || !this.loginPassword) {
-        this.$message({
-          message: '请输入完整的用户名密码',
-          type: 'error'
-        })
-        return false
-      }
-      this.verifyVisible = true
-    },
-    login () {
-      if (this.loginName === 'admin' && this.loginPassword === '123456') {
-        this.$router.push('/useOnline/sliderFixed')
+    const slider = 'slider' + '-' + s.join('')
+    const point = 'point' + '-' + s.join('')
+    // 判断下是否存在 slider
+    console.log(localStorage.getItem('slider'))
+    if (!localStorage.getItem('slider')) {
+      localStorage.setItem('slider', slider)
+    }
+    if (!localStorage.getItem('point')) {
+      localStorage.setItem('point', point)
+    }
+  }
+
+  // 请求背景图片和验证图片
+  getPictrue () {
+    const data = {
+      captchaType: 'blockPuzzle', // clickWord
+      clientUid: localStorage.getItem('slider'),
+      ts: Date.now() // 现在的时间戳
+    }
+    reqGet(data).then((res: any) => {
+      if (res.repCode === '0000') {
+        this.imageInfo.backImgBase = res.repData.originalImageBase64
+        this.imageInfo.blockBackImgBase = res.repData.jigsawImageBase64
+        this.imageInfo.backToken = res.repData.token
+        this.imageInfo.secretKey = res.repData.secretKey
+        // 点击字验证码特有，滑动不需要
+        this.imageInfo.wordList = res.repData.wordList
       } else {
-        this.$message({
-          message: '输入测试账号密码',
-          type: 'warning'
-        })
+        this.checkTips = res.repMsg
       }
+
+      // 判断接口请求次数是否失效
+      if (res.repCode === '6201') {
+        this.imageInfo.backImgBase = ''
+        this.imageInfo.blockBackImgBase = ''
+      }
+    })
+  }
+
+  handleActionEnd (data: CheckParamsType) {
+    reqCheck(data).then((res: any) => {
+      if (res.repCode === '0000') {
+        this.checkStatus = 'success'
+      } else {
+        this.checkStatus = 'error'
+        this.checkTips = res.reqMsg
+      }
+    })
+  }
+
+  checkStatusChange (status: CheckStatusType) {
+    this.checkStatus = status
+  }
+
+  checkPrama () {
+    if (!this.loginName || !this.loginPassword) {
+      this.$message({
+        message: '请输入完整的用户名密码',
+        type: 'error'
+      })
+      return false
+    }
+    this.verifyVisible = true
+  }
+
+  login () {
+    if (this.loginName === 'admin' && this.loginPassword === '123456') {
+    } else {
+      this.$message({
+        message: '输入测试账号密码',
+        type: 'warning'
+      })
     }
   }
 }

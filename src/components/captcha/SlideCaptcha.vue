@@ -3,7 +3,7 @@
     <div :class="mode==='pop'?'verifybox':''" :style="{'max-width': imgSize.width.toString().indexOf('%') > -1 ?
     imgSize.width : parseInt(imgSize.width)+30+'px'}">
       <div class="verifybox-top"  v-if="mode==='pop'">
-        请完成安全验证
+        {{ title }}
         <span class="verifybox-close" @click="closeBox">
           <i class="iconfont icon-close"></i>
         </span>
@@ -34,22 +34,21 @@
 </template>
 <script lang="ts">
 /**
-   * Verify 验证码组件
-   * @description 分发验证码使用
-   * */
+ * Verify 验证码组件
+ * @description 分发验证码使用
+ **/
 import { Vue, Component, Prop, Ref, Model, Emit } from 'vue-property-decorator'
 import VerifySlide from './Verify/VerifySlide.vue'
 import {
   CaptchaPositionType,
   ImageSizeType,
-  ComponentType,
   ImageInfoType,
   CheckParamsType,
   CheckStatusType
 } from '@/@types/component'
 
 @Component({
-  name: 'VueVerify',
+  name: 'SliderCaptcha',
   components: {
     VerifySlide
   }
@@ -59,6 +58,8 @@ export default class extends Vue {
   @Model('input', { type: Boolean, default: false }) public value!: boolean
   // 验证码出现类型 pop=>弹窗 fixed=>悬浮
   @Prop({ default: 'pop' }) private mode!: CaptchaPositionType
+  // 标题
+  @Prop({ default: '请完成安全验证' }) private title!: string
   // 验证码当前校验状态
   @Prop({ default: 'waiting' }) private checkStatus!: CheckStatusType
   // 距离顶部或者底部的距离
@@ -80,12 +81,8 @@ export default class extends Vue {
 
   @Ref('instance') readonly componentInstance!: any
 
-  // 组件显示状态
-  private clickShow = true
   // 内部验证码类型
   private verifyType = '1'
-  // 组件类型
-  private componentType: ComponentType = 'VerifySlide'
   // 默认图片
   private defaultImg: string = require('@/assets/image/default.jpg')
 
@@ -116,21 +113,6 @@ export default class extends Vue {
   @Emit('checkStatusChange')
   private checkStatusChange (params: CheckStatusType) {
     return params
-  }
-
-  private show () {
-    if (this.mode === 'pop') {
-      this.clickShow = true
-    }
-  }
-
-  // ============== computed =====
-  private get showBox () {
-    if (this.mode === 'pop') {
-      return this.clickShow
-    } else {
-      return true
-    }
   }
 }
 </script>

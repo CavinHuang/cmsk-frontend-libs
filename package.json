@@ -1,6 +1,6 @@
 {
   "name": "cmsk-fontend-libs",
-  "version": "0.1.10",
+  "version": "0.1.15",
   "private": false,
   "description": "验证码组件",
   "author": "cavinHuang<sujinw@qq.com>",

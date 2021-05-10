@@ -3,7 +3,7 @@
     <div :class="mode==='pop'?'verifybox':''" :style="{'max-width': imgSize.width.toString().indexOf('%') > -1 ?
     imgSize.width : parseInt(imgSize.width)+30+'px'}">
       <div class="verifybox-top"  v-if="mode==='pop'">
-        请完成安全验证
+        {{ title }}
         <span class="verifybox-close" @click="closeBox">
           <i class="iconfont icon-close"></i>
         </span>
@@ -19,7 +19,7 @@
           :explain="explain"
           :imgSize="imgSize"
           :barSize="barSize"
-          :defaultImg = "defaultImg"
+          :defaultImg="defaultImg"
           :refresh="refresh"
           @actionEnd="actionEndHandle"
           @success="closeBox"
@@ -32,22 +32,21 @@
 </template>
 <script lang="ts">
 /**
-   * Verify 验证码组件
-   * @description 分发验证码使用
-   * */
+ * Verify 验证码组件
+ * @description 分发验证码使用
+ * */
 import { Vue, Component, Prop, Ref, Model, Emit } from 'vue-property-decorator'
 import VerifySlide from './Verify/VerifyPoints.vue'
 import {
   CaptchaPositionType,
   ImageSizeType,
-  ComponentType,
   ImageInfoType,
   CheckParamsType,
   CheckStatusType
 } from '@/@types/component'
 
 @Component({
-  name: 'VueVerify',
+  name: 'ClickWordCaptcha',
   components: {
     VerifySlide
   }
@@ -55,6 +54,8 @@ import {
 
 export default class extends Vue {
   @Model('input', { type: Boolean, default: false }) public value!: boolean
+  // 标题
+  @Prop({ default: '请完成安全验证' }) private title!: string
   // 验证码出现类型 pop=>弹窗 fixed=>悬浮
   @Prop({ default: 'pop' }) private mode!: CaptchaPositionType
   // 验证码当前校验状态
@@ -78,8 +79,6 @@ export default class extends Vue {
   private clickShow = true
   // 内部验证码类型
   private verifyType = '1'
-  // 组件类型
-  private componentType: ComponentType = 'VerifySlide'
   // 默认图片
   private defaultImg: string = require('@/assets/image/default.jpg')
 

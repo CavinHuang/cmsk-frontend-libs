@@ -16,7 +16,7 @@ import Vue from 'vue'
 import Verify from 'cmsk-fontend-libs'
 Vue.use(Verify)
 ```
-### 局部安装
+#### 局部安装
 ```js
 import {SliderCaptcha, ClickWordCaptcha} from 'cmsk-fontend-libs'
 ```

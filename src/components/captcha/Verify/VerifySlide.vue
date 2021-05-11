@@ -115,6 +115,7 @@ export default class extends Vue {
   private transitionWidth = ''
   private startMoveTime = 0
   private startLeft = 0
+  private captchaVerification = ''
 
   @Emit('checkStatusChange')
   private checkStatusChange (params: CheckStatusType) {
@@ -174,7 +175,7 @@ export default class extends Vue {
     }
   }
 
-  @Emit('success') private success () { return true }
+  @Emit('success') private success () { return this.captchaVerification }
 
   private get barArea () {
     return this.$el.querySelector('.verify-bar-area') as HTMLDivElement
@@ -292,6 +293,7 @@ export default class extends Vue {
         pointJson: this.secretKey ? aesEncrypt(JSON.stringify({ x: moveLeftDistance, y: 5.0 }), this.secretKey) : JSON.stringify({ x: moveLeftDistance, y: 5.0 }),
         token: this.backToken
       }
+      this.captchaVerification = this.secretKey ? aesEncrypt(this.backToken + '---' + JSON.stringify({ x: moveLeftDistance, y: 5.0 }), this.secretKey) : this.backToken + '---' + JSON.stringify({ x: moveLeftDistance, y: 5.0 })
       this.actionEnd(data)
       this.status = false
     }

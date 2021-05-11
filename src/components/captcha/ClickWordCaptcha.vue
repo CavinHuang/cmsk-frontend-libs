@@ -87,14 +87,14 @@ export default class extends Vue {
     return false
   }
 
-  public closeBox () {
+  public closeBox (captchaVerification: string) {
     this.input()
-    this.success()
+    this.success(captchaVerification)
   }
 
   @Emit('success')
-  private success () {
-    return true
+  private success (captchaVerification: string) {
+    return captchaVerification
   }
 
   @Emit('actionEnd')

@@ -116,6 +116,7 @@ export default class extends Vue {
   private barAreaBorderColor = ''
   private showRefresh = true
   private bindingClick = true
+  private captchaVerification = ''
 
   @Watch('imageInfo', { immediate: true, deep: true })
   private onChangeImageInfo (info: ImageInfoType) {
@@ -156,7 +157,7 @@ export default class extends Vue {
     return params
   }
 
-  @Emit('success') private success () { return true }
+  @Emit('success') private success () { return this.captchaVerification }
 
   private resetSize (vm: any): SetSizeType {
     return resetSize(vm, this.imgSize, this.barSize)
@@ -190,6 +191,8 @@ export default class extends Vue {
           pointJson: this.secretKey ? aesEncrypt(JSON.stringify(this.checkPosArr), this.secretKey) : JSON.stringify(this.checkPosArr),
           token: this.backToken
         }
+        this.captchaVerification = this.secretKey
+          ? aesEncrypt(this.backToken + '---' + JSON.stringify(this.checkPosArr), this.secretKey) : this.backToken + '---' + JSON.stringify(this.checkPosArr)
         this.actionEnd(data)
       }, 400)
     }

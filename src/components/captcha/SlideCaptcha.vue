@@ -24,7 +24,7 @@
           :defaultImg = "defaultImg"
           :refresh="refresh"
           @actionEnd="actionEndHandle"
-          @success="closeBox"
+          @success="success"
           @checkStatusChange="checkStatusChange"
           ref="instance"
         />
@@ -91,13 +91,13 @@ export default class extends Vue {
     return false
   }
 
-  public closeBox (captchaVerification: string) {
+  public closeBox () {
     this.input()
-    this.success(captchaVerification)
   }
 
   @Emit('success')
   private success (captchaVerification: string) {
+    this.closeBox()
     return captchaVerification
   }
 

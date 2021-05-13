@@ -59,3 +59,13 @@ export interface PointType {
   x: number
   y: number
 }
+
+/**
+ * 位置信息
+ */
+export interface CaptchaVerifyDataType {
+  secretKey: string
+  backToken: string
+  distance?: PointType
+  checkPosArr?: PointType[]
+}

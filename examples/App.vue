@@ -99,8 +99,9 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import Verify from '../src/components/captcha/SlideCaptcha.vue'
-import { reqGet, reqCheck } from '../src/components/captcha/api/index'
 import { CheckStatusType, CheckParamsType, ImageInfoType } from '@/@types/component'
+const reqGet = (data: any) => Promise.resolve()
+const reqCheck = (data: any) => Promise.resolve()
 @Component({
   components: {
     Verify
@@ -128,8 +129,8 @@ export default class extends Vue {
     this.getPictrue()
   }
 
-  successHandle () {
-    alert('验证成功')
+  successHandle (result: any) {
+    console.log('验证成功', result)
   }
 
   // 生成 uuid

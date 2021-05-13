@@ -49,7 +49,7 @@ import { Vue, Component, Prop, Emit, Watch } from 'vue-property-decorator'
 import { resetSize } from './../utils/util'
 import { aesEncrypt } from './../utils/ase'
 import {
-  CaptchaPositionType,
+  CaptchaPositionType, CaptchaVerifyDataType,
   CheckParamsType,
   CheckStatusType,
   ImageInfoType,
@@ -117,6 +117,14 @@ export default class extends Vue {
   private showRefresh = true
   private bindingClick = true
   private captchaVerification = ''
+  private captchaVerifyData: CaptchaVerifyDataType = {
+    secretKey: '',
+    backToken: '',
+    distance: {
+      x: 0,
+      y: 0
+    }
+  }
 
   @Watch('imageInfo', { immediate: true, deep: true })
   private onChangeImageInfo (info: ImageInfoType) {
@@ -157,7 +165,12 @@ export default class extends Vue {
     return params
   }
 
-  @Emit('success') private success () { return this.captchaVerification }
+  @Emit('success') private success () {
+    return {
+      captchaVerification: this.captchaVerification,
+      captchaVerifyData: this.captchaVerifyData
+    }
+  }
 
   private resetSize (vm: any): SetSizeType {
     return resetSize(vm, this.imgSize, this.barSize)
@@ -190,6 +203,11 @@ export default class extends Vue {
           captchaType: 'clickWord',
           pointJson: this.secretKey ? aesEncrypt(JSON.stringify(this.checkPosArr), this.secretKey) : JSON.stringify(this.checkPosArr),
           token: this.backToken
+        }
+        this.captchaVerifyData = {
+          secretKey: this.secretKey,
+          backToken: this.backToken,
+          checkPosArr: this.checkPosArr
         }
         this.captchaVerification = this.secretKey
           ? aesEncrypt(this.backToken + '---' + JSON.stringify(this.checkPosArr), this.secretKey) : this.backToken + '---' + JSON.stringify(this.checkPosArr)

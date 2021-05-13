@@ -41,7 +41,7 @@ import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator'
 import { aesEncrypt } from '../utils/ase'
 import { resetSize } from '../utils/util'
 import {
-  CaptchaPositionType,
+  CaptchaPositionType, CaptchaVerifyDataType,
   CheckParamsType,
   CheckStatusType,
   ImageInfoType,
@@ -116,6 +116,14 @@ export default class extends Vue {
   private startMoveTime = 0
   private startLeft = 0
   private captchaVerification = ''
+  private captchaVerifyData: CaptchaVerifyDataType = {
+    secretKey: '',
+    backToken: '',
+    distance: {
+      x: 0,
+      y: 0
+    }
+  }
 
   @Emit('checkStatusChange')
   private checkStatusChange (params: CheckStatusType) {
@@ -156,6 +164,7 @@ export default class extends Vue {
         this.tipWords = ''
         this.success()
         this.checkStatusChange('waiting')
+        this.captchaVerification = ''
       }, 1000)
     } else if (status === 'error') {
       this.moveBlockBackgroundColor = '#d9534f'
@@ -163,19 +172,22 @@ export default class extends Vue {
       this.iconColor = '#fff'
       this.iconClass = 'icon-close'
       this.passFlag = false
-      setTimeout(() => {
-        this.refreshHandler()
-        this.checkStatusChange('waiting')
-      }, 1000)
       this.tipWords = '验证失败'
       setTimeout(() => {
         this.tipWords = ''
+        this.refreshHandler()
         this.checkStatusChange('waiting')
       }, 1000)
     }
   }
 
-  @Emit('success') private success () { return this.captchaVerification }
+  @Emit('success')
+  private success () {
+    return {
+      captchaVerification: this.captchaVerification,
+      captchaVerifyData: this.captchaVerifyData
+    }
+  }
 
   private get barArea () {
     return this.$el.querySelector('.verify-bar-area') as HTMLDivElement
@@ -293,6 +305,11 @@ export default class extends Vue {
         pointJson: this.secretKey ? aesEncrypt(JSON.stringify({ x: moveLeftDistance, y: 5.0 }), this.secretKey) : JSON.stringify({ x: moveLeftDistance, y: 5.0 }),
         token: this.backToken
       }
+      this.captchaVerifyData = {
+        secretKey: this.secretKey,
+        backToken: this.backToken,
+        distance: { x: moveLeftDistance, y: 5.0 }
+      }
       this.captchaVerification = this.secretKey ? aesEncrypt(this.backToken + '---' + JSON.stringify({ x: moveLeftDistance, y: 5.0 }), this.secretKey) : this.backToken + '---' + JSON.stringify({ x: moveLeftDistance, y: 5.0 })
       this.actionEnd(data)
       this.status = false
@@ -323,6 +340,7 @@ export default class extends Vue {
     this.refresh()
     setTimeout(() => {
       this.transitionWidth = ''
+      this.captchaVerification = ''
       this.transitionLeft = ''
       this.text = this.explain
     }, 300)

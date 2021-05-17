@@ -166,10 +166,11 @@ export default class extends Vue {
   }
 
   @Emit('success') private success () {
-    return {
-      captchaVerification: this.captchaVerification,
-      captchaVerifyData: this.captchaVerifyData
-    }
+    return this.captchaVerification
+    // return {
+    //   captchaVerification: this.captchaVerification,
+    //   captchaVerifyData: this.captchaVerifyData
+    // }
   }
 
   private resetSize (vm: any): SetSizeType {

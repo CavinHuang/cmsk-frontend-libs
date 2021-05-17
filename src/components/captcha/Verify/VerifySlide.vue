@@ -250,12 +250,12 @@ export default class extends Vue {
 
   // 鼠标按下
   private start (e: TouchEvent | MouseEvent) {
-    console.log(e, e instanceof TouchEvent)
+    e = e || window.event
     let x
-    if (e instanceof TouchEvent) { // 兼容PC端
+    if (window.TouchEvent && e instanceof TouchEvent) { // 兼容PC端
       x = e.touches[0].pageX
     } else {
-      x = e.clientX
+      x = (e as MouseEvent).clientX
     }
     this.startLeft = Math.floor(x - this.barArea.getBoundingClientRect().left)
     this.startMoveTime = +new Date() // 开始滑动的时间
@@ -273,10 +273,10 @@ export default class extends Vue {
   private move (e: TouchEvent | MouseEvent) {
     let x
     if (this.status && !this.isEnd) {
-      if (e instanceof TouchEvent) { // 兼容PC端
+      if (window.TouchEvent && e instanceof TouchEvent) { // 兼容PC端
         x = e.touches[0].pageX
       } else {
-        x = e.clientX
+        x = (e as MouseEvent).clientX
       }
       var barAreaLeft = this.barArea.getBoundingClientRect().left
       var moveBlockLeft = x - barAreaLeft // 小方块相对于父元素的left值

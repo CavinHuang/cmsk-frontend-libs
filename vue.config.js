@@ -24,6 +24,10 @@ module.exports = {
       .use('url-loader')
       .loader('url-loader')
       .tap((options) => Object.assign(options, { limit: 13312 }));
+      config.externals({
+        'vue': 'Vue',
+        'element-ui': 'ELEMENT'
+      })
   },
   // 设置css: { extract: false },可以强制内联，就不会将css单独打包成一个文件，导致页面没有style
   css: { extract: false },
